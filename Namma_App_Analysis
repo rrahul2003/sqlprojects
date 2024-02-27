@@ -1,0 +1,97 @@
+Data Creation Queries
+
+drop table if exists loc;
+create table loc
+(id int, assembly varchar(200));
+
+
+
+drop table if exists payment;
+create table payment
+(id int, method varchar(200));
+
+
+drop table if exists duration;
+create table duration
+(id int, duration varchar(200));
+
+
+drop table if exists trips;
+CREATE TABLE  trips(tripid integer,faremethod integer,fare integer,loc_from integer,loc_to integer,driverid integer,custid integer,distance integer,duration integer);
+
+
+drop table if exists trips_details;
+CREATE TABLE trips_details1(tripid integer,loc_from integer,searches integer,searches_got_estimate integer,searches_for_quotes integer,searches_got_quotes integer,customer_not_cancelled	integer,driver_not_cancelled integer,otp_entered integer,end_ride integer);
+
+Imp Note--for data, CSV file uploaded , download it and upload the same
+
+Data Analysis Queries
+
+select * from loc;
+
+select * from payment;
+
+select * from duration;
+
+select * from trips;
+
+select * from trips_details1;
+
+--1. Total trips
+
+select count(distinct tripid) from trips_details1
+
+-- to check whether a table has duplicate values
+select tripid, count(tripid) from trips_details1
+group by tripid
+having count(tripid) > 1;
+
+--2. total drivers
+
+select count(distinct driverid) total_drivers from trips;
+
+-- to check whether driverid column has duplicate values
+
+select driverid, count(driverid) from trips
+
+--3. total earnings
+
+select sum(fare) total_earnings from trips;
+
+--4. total completed trips
+
+select count(distinct tripid) total_trips from trips;
+
+-- to check whether tripid column has duplicate value
+select tripid, count(tripid) from trips
+
+--ans is 983
+
+--5. total searches
+
+select sum(searches) total_searches from trips_details1
+
+--ans is 2161
+
+--6. total searches which got estimated
+
+select sum(searches_got_estimate) from trips_details1
+
+--ans is 1758
+
+--7. total searches for quotes
+
+select sum(searches_for_quotes) from trips_details1
+
+--ans is 1455
+
+--8. total searches which got quotes
+
+select sum(searches_got_quotes) from trips_details1
+
+--ans is 1277
+
+--9. total driver cancelled
+
+--(very important)
+select count(*) - sum(driver_not_cancelled) from trips_details1
