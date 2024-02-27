@@ -232,3 +232,7 @@ select driver_id, (sm * 1.0 / cnt) * 100 cancel_pcnt from
 from driver_order)a group by driver_id order by driver_id)b
 
 -----***---PROJECT COMPLETED--***----
+
+you can also copy data from below given link
+
+https://2003sqlprojects.blogspot.com/2024/02/faasos-data-analysis-data-creation.html
