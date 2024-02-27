@@ -1,0 +1,164 @@
+drop table if exists sales;
+create table sales(
+	invoice_id varchar(30) not null primary key,
+	branch varchar(5) not null,
+	city varchar(30) not null,
+	customer_type varchar(30) not null,
+	gender varchar(10) not null,
+	product_line varchar(100) not null,
+	unit_price decimal(10,2) not null,
+	quantity integer not null,
+	VAT double precision not null,
+	total decimal(10,2) not null,
+	date date not null,
+	time time not null,
+	payment_method varchar(15) not null,
+	cogs decimal(10,2) not null,
+	gross_margin_pct double precision,
+	gross_income decimal(10,2) not null,
+	ratings double precision
+	
+);
+
+
+select * from sales
+
+-------------------------------------------------------------------------------
+---------------------------------------------------
+
+
+-- time_of_day   -----------------------
+
+select time from sales
+
+select time,
+(case when time between '00:00:00' and '12:00:00' then 'morning'
+ when time between '12:01:00' and '16:00:00' then 'afternoon'
+ else 'evening' end
+) tm_of_dy
+from sales;
+
+alter table sales 
+add column time_of_day varchar(20);
+
+update sales
+set time_of_day = (
+case 	when time between '00:00:00' and '12:00:00' then 'morning'
+ 		when time between '12:01:00' and '16:00:00' then 'afternoon'
+ 		else 'evening' 
+end
+);
+
+-- day_name    ---------------------
+
+select date, to_char(date,'day') day_name from sales;
+
+alter table sales
+add column day_name varchar(10);
+
+update sales
+set day_name = to_char(date,'day');
+
+-- month_name   ----------------
+
+select date, to_char(date,'month') month_name from sales;
+
+alter table sales
+add column month_name varchar(10);
+
+update sales
+set month_name = to_char(date,'month');
+-----------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------
+-----------------  Generic  --------------------------------------------------
+
+select * from sales
+
+--1. How many unique cities does data have ?
+
+select distinct city from sales;
+
+--2. How many branches in city ?
+
+select distinct city, branch from sales;
+
+-------------------------------------------------------------------------------------------------------
+----------------   Product    ------------------------------------------------------------------
+
+select * from sales
+
+--1. How many unique product lines does the data have ?
+
+select  product_line, count(distinct product_line) cnt from sales
+group by product_line
+
+--2. Which is the most common payment method ?
+
+select payment_method, sum(total) from sales
+group by payment_method
+order by sum(total) desc
+
+-- correct answer
+
+select payment_method, count(payment_method) from sales
+group by payment_method
+order by count(payment_method) desc
+
+--3. What is the most selling product line ?
+
+select product_line, count(product_line) from sales
+group by product_line
+order by count(product_line) desc
+
+--4. What is the total revenue by month ?
+
+select month_name as month, sum(total) total_rvn from sales
+group by month
+order by total_rvn desc;
+
+--5. Which month has the largest cogs ?
+
+select month_name as mnth, sum(cogs) total_cogs from sales
+group by mnth
+order by total_cogs desc
+
+--6. Which product_line has the largest revenue ?
+
+select product_line as prdct, sum(total) total_rvn from sales
+group by prdct
+order by total_rvn desc
+
+--7. Which city has the largest revenue ?
+
+select city, branch, sum(total) rvn from sales
+group by city, branch
+order by rvn desc
+
+--8. Which product_line has the largest vat ?
+
+select product_line as pdt, avg(vat) avg_vat from sales
+group by pdt
+order by avg_vat desc
+
+--9. Fetch each product line and add a column to those product line showing "Good", "Bad".
+--   Good if its greater than average sales 
+
+
+--10. Which brand sold more products than average product sold ?
+
+select branch, sum(quantity) totl_qty from sales
+group by branch
+having sum(quantity) > (select avg(quantity) from sales);
+
+--11. Which is the most common product line by the gender ?
+
+select gender, product_line, count(product_line) ttl_cnt from sales
+group by gender, product_line
+order by ttl_cnt desc
+
+--12. What is the average rating of each product ?
+
+select ceiling(avg(ratings)) as avg_rtg, product_line
+from sales
+group by product_line
+order by avg_rtg desc
