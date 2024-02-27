@@ -23,7 +23,7 @@ CREATE TABLE  trips(tripid integer,faremethod integer,fare integer,loc_from inte
 drop table if exists trips_details;
 CREATE TABLE trips_details1(tripid integer,loc_from integer,searches integer,searches_got_estimate integer,searches_for_quotes integer,searches_got_quotes integer,customer_not_cancelled	integer,driver_not_cancelled integer,otp_entered integer,end_ride integer);
 
-Imp Note--for data, CSV file uploaded , download it and upload the same
+Imp Note--for data, excel file uploaded , download it and create CSV of each sheets and upload
 
 Data Analysis Queries
 
